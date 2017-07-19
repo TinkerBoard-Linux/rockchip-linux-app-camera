@@ -13,7 +13,7 @@ MainWindow::MainWindow(QWidget *parent) :baseWindow(parent),mediaHasUpdate(false
     connect(m_wid->m_topWid->m_btnexit,SIGNAL(clicked(bool)),this,SLOT(slot_appQuit()));
     connect(m_wid->m_topWid->m_btnreturn,SIGNAL(clicked(bool)),this,SLOT(slot_returnanimation()));
 
-    m_wid->openCamera();
+    //m_wid->openCamera();
 
 }
 
