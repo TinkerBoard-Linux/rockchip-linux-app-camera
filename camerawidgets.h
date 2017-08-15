@@ -351,9 +351,11 @@ private slots:
 	void updateRecordTime();
 	void displayRecorderError();
 	void handleResults(const QString &);
+	void slot_camera_state_error();
 
 signals:
 	void sig_openCamera();
+	void sig_camera_err();
 
 };
 

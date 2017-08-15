@@ -97,6 +97,8 @@ QPushButton *cameraWidgets::m_capture;
 QPushButton *cameraWidgets::m_mode;
 QWidget *cameraWidgets::m_frame;
 QCameraViewfinder *cameraWidgets::m_viewfinder;
+gboolean m_camera_error = false;
+static cameraWidgets *m_cameraWidgets;
 
 cameraWidgets::cameraWidgets(QWidget *parent):baseWidget(parent)
 {
@@ -259,6 +261,18 @@ void cameraWidgets::handleResults(const QString &) {
     qDebug() << "Thread run over";
 }
 
+void cameraWidgets::slot_camera_state_error ()
+{
+    qDebug() << "slot_camera_state_error";
+
+    if(m_capture->isEnabled() && m_mode->isEnabled()){
+        qDebug() << "slot_camera_state_error make button disable";
+        m_capture->setEnabled(false);
+        m_mode->setEnabled(false);
+        //closeCamera();
+    }
+}
+
 GstPadProbeReturn
 cameraWidgets::camera_src_get_timestamp_probe (GstPad * pad, GstPadProbeInfo * info,
     gpointer udata)
@@ -351,6 +365,7 @@ cameraWidgets::sync_bus_callback (GstBus * bus, GstMessage * message, gpointer d
         }
       }
       break;
+    }
     case GST_MESSAGE_STATE_CHANGED:
       if (GST_MESSAGE_SRC (message) == (GstObject *) camerabin) {
         GstState newstate;
@@ -361,6 +376,13 @@ cameraWidgets::sync_bus_callback (GstBus * bus, GstMessage * message, gpointer d
         }
       }
       break;
+    case GST_MESSAGE_ERROR:{
+      GST_FIXME ("GST_MESSAGE_ERROR in sync_bus_callback");
+      m_camera_error = true;
+      ready_for_capture = false;
+      if(m_cameraWidgets){
+        m_cameraWidgets->sig_camera_err();
+      }
     }
     default:
       /* unhandled message */
@@ -368,7 +390,6 @@ cameraWidgets::sync_bus_callback (GstBus * bus, GstMessage * message, gpointer d
   }
   return GST_BUS_PASS;
 }
-
 gboolean cameraWidgets::bus_callback (GstBus * bus, GstMessage * message, gpointer data)
 {
   switch (GST_MESSAGE_TYPE (message)) {
@@ -951,6 +972,14 @@ gboolean cameraWidgets::run_preview_pipeline (gpointer user_data)
 
   set_metadata (camerabin);
 
+  GST_FIXME ("ready_for_capture=%d, m_camera_error=%d", ready_for_capture, m_camera_error);
+  if(ready_for_capture && !m_camera_error){
+    m_capture->setEnabled(true);
+    m_mode->setEnabled(true);
+  } else {
+    m_capture->setEnabled(false);
+    m_mode->setEnabled(false);
+  }
   m_capture->setText(mode == MODE_IMAGE ? "Take Picture" : "Start Recorder");
   m_mode->setText(mode == MODE_IMAGE ? "Capture Image Mode" : "Video Recorder Mode");
 
@@ -1185,6 +1214,7 @@ void cameraWidgets::setupViewfinder(QObject * viewfinder) {
 
 void cameraWidgets::init()
 {
+    m_cameraWidgets = this;
     gchar *target_times = NULL;
     gchar *ev_option = NULL;
     gchar *fn_option = NULL;
@@ -1317,6 +1347,7 @@ void cameraWidgets::init()
 
     connect(m_mode, SIGNAL(pressed()),this,SLOT(slot_pressed()));
     connect(m_mode, SIGNAL(clicked()),this,SLOT(slot_modeswitch()));
+    connect(this, SIGNAL(sig_camera_err()), this, SLOT(slot_camera_state_error()), Qt::AutoConnection);
 }
 
 void cameraWidgets::initLayout()
@@ -1336,6 +1367,8 @@ void cameraWidgets::initLayout()
     lyout2->setContentsMargins(10,10,10,10);
     lyout2->setSpacing(10);
     hmiddlelyout->addLayout(lyout2,0);
+    m_capture->setEnabled(false);
+    m_mode->setEnabled(false);
 
     vmainlyout->addWidget(m_topWid,0);
     vmainlyout->addLayout(hmiddlelyout,1);
