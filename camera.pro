@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui quickwidgets multimedia multimediawidgets
+QT       += core gui quickwidgets multimedia multimediawidgets multimedia-private
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -23,6 +23,7 @@ PKGCONFIG += \
     gstreamer-video-$$GST_VERSION \
     gstreamer-pbutils-$$GST_VERSION
 
+LIBS += -lqgsttools_p
 DEFINES += HAVE_GST_PHOTOGRAPHY
 LIBS += -lgstphotography-$$GST_VERSION
 DEFINES += GST_USE_UNSTABLE_API #prevents warnings because of unstable photography API
