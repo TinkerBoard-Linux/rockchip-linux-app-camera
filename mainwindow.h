@@ -8,32 +8,28 @@
 #include <base/basewindow.h>
 #include <QThread>
 
-class MainWindow : public baseWindow
+class MainWindow : public BaseWindow
 {
     Q_OBJECT
-
 public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
     QStackedLayout *m_mainlyout;
     QStackedWidget *m_stackedWid;
-    cameraWidgets *m_wid;
+    cameraWidgets *m_cameraWid;
 protected:
     void keyPressEvent(QKeyEvent *event);
+    // Used for disable or enable application when car-reverse event comes.
+    void disableApplication();
+    void enableApplication();
 private:
-    bool mediaHasUpdate;
-
-private:
-
     void initLayout();
-
 private slots:
     void slot_appQuit();
     void slot_standby();
 public slots:
     void slot_returnanimation();
-
 };
 
 

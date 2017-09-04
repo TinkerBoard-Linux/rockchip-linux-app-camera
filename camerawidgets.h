@@ -315,7 +315,7 @@ static struct rk_cams_dev_info g_cam_infos;
 
 class QGstreamerVideoRendererInterface;
 
-class cameraWidgets:public baseWidget
+class cameraWidgets:public BaseWidget
 {
 	Q_OBJECT
 public:
@@ -325,7 +325,7 @@ public:
 	void closeCamera();
 	void openCamera();
 
-    static cameraTopWidgets *m_topWid;
+    static CameraTopWidgets *m_topWid;
 
 private:
     /*QCamera *m_camera;

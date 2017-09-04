@@ -3,7 +3,7 @@
 #include <QTime>
 #include <QQuickItem>
 
-cameraPreviewwidgets::cameraPreviewwidgets(QWidget *parent):baseWidget(parent)
+cameraPreviewwidgets::cameraPreviewwidgets(QWidget *parent):BaseWidget(parent)
 {
     setObjectName("cameraPreviewwidgets");
     setStyleSheet("#cameraPreviewwidgets{background:rgb(10,10,10)}");

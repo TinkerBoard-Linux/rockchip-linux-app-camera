@@ -4,14 +4,14 @@
 #
 #-------------------------------------------------
 
-QT       += core gui quickwidgets multimedia multimediawidgets multimedia-private
-
+QT  += core gui quickwidgets multimedia multimediawidgets multimedia-private
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
-
-
 
 TARGET = cameraView
 TEMPLATE = app
+
+# 3399Linux、Big DPI
+DEFINES += DEVICE_EVB
 
 CONFIG += link_pkgconfig
 GST_VERSION = 1.0
@@ -37,18 +37,18 @@ include(base/base.pri)
 
 SOURCES += main.cpp\
         mainwindow.cpp \
-    cameratopwidgets.cpp \
-    camerawidgets.cpp \
-    cameraquickcontentwidget.cpp \
-    camerapreviewwidgets.cpp \
-    global_value.cpp
+        cameratopwidgets.cpp \
+        camerawidgets.cpp \
+        cameraquickcontentwidget.cpp \
+        camerapreviewwidgets.cpp \
+        global_value.cpp \
 
-HEADERS  += mainwindow.h \
-    cameratopwidgets.h \
-    camerawidgets.h \
-    cameraquickcontentwidget.h \
-    camerapreviewwidgets.h \
-    global_value.h
+HEADERS += mainwindow.h \
+        cameratopwidgets.h \
+        camerawidgets.h \
+        cameraquickcontentwidget.h \
+        camerapreviewwidgets.h \
+        global_value.h \
 
 RESOURCES += \
     res_main.qrc

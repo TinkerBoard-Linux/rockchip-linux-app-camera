@@ -102,7 +102,7 @@ QComboBox *cameraWidgets::m_camerasbox;
 QComboBox *cameraWidgets::m_previewsizesbox;
 cameraWidgets *cameraWidgets::m_cameraWidgets;
 gboolean cameraWidgets::m_camera_error;
-cameraTopWidgets *cameraWidgets::m_topWid;
+CameraTopWidgets *cameraWidgets::m_topWid;
 gchar *cameraWidgets::videodevice_name;
 QString cameraWidgets::m_location;
 gint cameraWidgets::image_width;
@@ -117,7 +117,7 @@ QList<camerainfo> cameraWidgets::m_caminfoList;
 int cameraWidgets::m_cam_index;
 int cameraWidgets::m_preview_index;
 
-cameraWidgets::cameraWidgets(QWidget *parent):baseWidget(parent)
+cameraWidgets::cameraWidgets(QWidget *parent):BaseWidget(parent)
 {
     setObjectName("cameraWidgets");
     setStyleSheet("#cameraWidgets{background:rgb(10,10,10);}");
@@ -400,7 +400,7 @@ bool compare(const camerainfo info0, const camerainfo info1) {
 
 void cameraWidgets::showEvent(QShowEvent *event) {
     qDebug() << "cameraWidgets::showEvent";
-    m_topWid->m_title->setText(QString("opening camera(%1)").arg(videodevice_name));
+    m_topWid->setTitle(QString("opening camera(%1)").arg(videodevice_name));
     m_caminfoList.clear();
 
     mode = MODE_IMAGE;
@@ -468,7 +468,7 @@ void cameraWidgets::slot_capture()
     if (mode == MODE_IMAGE || (mode == MODE_VIDEO && !recording)) {
         if (camerabin && ready_for_capture) {
             qDebug() << "start " << (mode == MODE_IMAGE ? "capture" : "recorder");
-            m_topWid->m_title->setText(mode == MODE_IMAGE ? "capturing" : "recording");
+            m_topWid->setTitle(mode == MODE_IMAGE ? "capturing" : "recording");
             updateCamerabarStatus(false);
             g_idle_add ((GSourceFunc) run_taking_pipeline, NULL);                 
         }
@@ -510,7 +510,7 @@ void cameraWidgets::slot_camera_error (QString error)
 {
     qDebug() << "slot_camera_error:" << error;
 
-    m_topWid->m_title->setText(QString("camera error:%1").arg(error));
+    m_topWid->setTitle(QString("camera error:%1").arg(error));
     updateCamerabarStatus(false);
     m_topWid->m_btnreturn->setEnabled(true);
     stop_timer_count();
@@ -518,7 +518,7 @@ void cameraWidgets::slot_camera_error (QString error)
 
 void cameraWidgets::slot_capture_done(QString location) {
     qDebug() << "slot_capture_done:" << location;
-    m_topWid->m_title->setText(QString("capture %1").arg(location));
+    m_topWid->setTitle(QString("capture %1").arg(location));
     updateCamerabarStatus(true);
     if (mode == MODE_VIDEO && ready_for_capture) {
         recording = FALSE;
@@ -670,7 +670,7 @@ cameraWidgets::sync_bus_callback (GstBus * bus, GstMessage * message, gpointer d
 
       m_camera_error = true;
       ready_for_capture = false;
-      if(m_cameraWidgets){
+      if(m_cameraWidgets){
         emit m_cameraWidgets->sig_camera_error(QString("%1").arg(err->message));
       }
       g_error_free (err);
@@ -750,7 +750,7 @@ gboolean cameraWidgets::bus_callback (GstBus * bus, GstMessage * message, gpoint
 void cameraWidgets::switchMode() {
     //cleanup_pipeline();
     mode = mode == MODE_IMAGE ? MODE_VIDEO : MODE_IMAGE;
-    m_topWid->m_title->setText(QString("switch to %1").arg(mode == MODE_IMAGE ? "VIDEO MODE" : "IMAGE MODE"));
+    m_topWid->setTitle(QString("switch to %1").arg(mode == MODE_IMAGE ? "VIDEO MODE" : "IMAGE MODE"));
     updateCamerabarStatus(false);
 
     g_idle_add ((GSourceFunc) run_preview_pipeline, NULL);
@@ -1359,10 +1359,10 @@ gboolean cameraWidgets::run_preview_pipeline (gpointer user_data)
   GST_FIXME ("ready_for_capture=%d, m_camera_error=%d", ready_for_capture, m_camera_error);
   if(ready_for_capture && !m_camera_error){
     updateCamerabarStatus(true);
-    m_topWid->m_title->setText(QString("Camera(%1) open success").arg(videodevice_name));
+    m_topWid->setTitle(QString("Camera(%1) open success").arg(videodevice_name));
   } else {
     updateCamerabarStatus(false);
-    m_topWid->m_title->setText(QString("Camera(%1) open fail").arg(videodevice_name));
+    m_topWid->setTitle(QString("Camera(%1) open fail").arg(videodevice_name));
   }
 
   m_capture->setText(mode == MODE_IMAGE ? "Take Picture" : "Start Recorder");
@@ -1799,7 +1799,7 @@ void cameraWidgets::initLayout()
     QStackedLayout *stackedLayout = new QStackedLayout;
     stackedLayout->setStackingMode(QStackedLayout::StackAll);
 
-    m_topWid = new cameraTopWidgets(this);
+    m_topWid = new CameraTopWidgets(this);
 
     QVBoxLayout *hmiddlelyout = new QVBoxLayout;
 

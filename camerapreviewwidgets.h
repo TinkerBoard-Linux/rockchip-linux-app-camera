@@ -11,7 +11,7 @@
 #include <QMediaPlayer>
 
 
-class cameraPreviewwidgets:public baseWidget
+class cameraPreviewwidgets:public BaseWidget
 {
     Q_OBJECT
 public:

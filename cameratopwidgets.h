@@ -1,25 +1,25 @@
 #ifndef CAMERATOPWIDGETS_H
 #define CAMERATOPWIDGETS_H
 #include <QLabel>
-#include <basewidget.h>
+#include "basewidget.h"
 #include "basepushbutton.h"
 
-
-class cameraTopWidgets:public baseWidget
+class CameraTopWidgets:public BaseWidget
 {
+    Q_OBJECT
 public:
-    cameraTopWidgets(QWidget *parent = 0);
+    CameraTopWidgets(QWidget *parent=0);
+    ~CameraTopWidgets(){}
 
     FourStateButton *m_btnreturn;
-    flatButton *m_btnicon;
-    flatButton *m_btnmobile;
-    flatButton *m_btnsetting;
-    flatButton *m_btnmini;
-    flatButton *m_btnexit;
-
-    QLabel *m_title;
+    void setTitle(const QString& title){titleLabel->setText(title);}
 private:
-    void initWidget();
+    QLabel *titleLabel;
+
+    void initLayout();
+    void initConnection();
+signals:
+    void returnClick();
 };
 
 #endif // CAMERATOPWIDGETS_H

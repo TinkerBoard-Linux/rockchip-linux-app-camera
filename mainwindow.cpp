@@ -3,63 +3,62 @@
 
 #include <QDebug>
 
-MainWindow::MainWindow(QWidget *parent) :baseWindow(parent),mediaHasUpdate(false)
-
+MainWindow::MainWindow(QWidget *parent):BaseWindow(parent)
 {
-    mainwid=this;
     initLayout();
-
-    connect(m_wid->m_topWid->m_btnmini,SIGNAL(clicked(bool)),this,SLOT(showMinimized()));
-    connect(m_wid->m_topWid->m_btnexit,SIGNAL(clicked(bool)),this,SLOT(slot_appQuit()));
-    connect(m_wid->m_topWid->m_btnreturn,SIGNAL(clicked(bool)),this,SLOT(slot_returnanimation()));
-
-    //m_wid->openCamera();
-
+    connect(m_cameraWid->m_topWid,SIGNAL(returnClick()),this,SLOT(slot_appQuit()));
 }
 
 MainWindow::~MainWindow()
 {
-
 }
 
 void MainWindow::initLayout(){
-   QVBoxLayout *mainLayout = new QVBoxLayout;
-    m_wid = new cameraWidgets(this);
-    mainLayout->addWidget(m_wid);
-    setLayout(mainLayout);
+    QVBoxLayout *mainLayout = new QVBoxLayout;
+
+    m_cameraWid = new cameraWidgets(this);
+    mainLayout->addWidget(m_cameraWid);
     mainLayout->setContentsMargins(0,0,0,0);
+
+    setLayout(mainLayout);
 }
+
 void MainWindow::slot_appQuit()
 {
     this->close();
 }
+
 void MainWindow::slot_returnanimation()
 {
-
     qDebug() << "closeCameraApp";
-    m_wid->closeCamera();
+    m_cameraWid->closeCamera();
     this->close();
+}
+
+void MainWindow::disableApplication()
+{
+    qDebug("disable camera application.");
+    this->setVisible(false);
+}
+
+void MainWindow::enableApplication()
+{
+    qDebug("enable camera application.");
+    this->setVisible(true);
 }
 
 void MainWindow::keyPressEvent(QKeyEvent *event)
 {
-    qDebug()<<"key value is:"<<event->key();
-    switch(event->key())
-    {
-    // update musicPlayer and videoPlayer's volume by Key
-    case Qt::Key_VolumeDown:
-        QWidget::keyPressEvent(event);
-        break;
-    case Qt::Key_VolumeUp:
-        QWidget::keyPressEvent(event);
-        break;
-    case Qt::Key_PowerOff:   // when key_power enter
+    qDebug()<<"Received ketpress event with key value:"<<event->key();
+    switch(event->key()){
+    case Qt::Key_PowerOff:
         QTimer::singleShot(100, this, SLOT(slot_standby()));
         break;
     default:
         break;
     }
 }
+
 void MainWindow::slot_standby()
 {
     system("echo mem > /sys/power/state");

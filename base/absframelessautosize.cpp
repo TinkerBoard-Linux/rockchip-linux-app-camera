@@ -1,5 +1,6 @@
 #include "absframelessautosize.h"
 
+
 AbsFrameLessAutoSize::AbsFrameLessAutoSize(QWidget *parent)
     : QWidget(parent)
 {
@@ -9,7 +10,8 @@ AbsFrameLessAutoSize::AbsFrameLessAutoSize(QWidget *parent)
     m_border=4;
 
     setMouseTracking(true);
-    setWindowFlags(Qt::FramelessWindowHint); //setting windows tool bar icon invisiable
+    //setting windows tool bar icon invisiable
+    setWindowFlags(Qt::FramelessWindowHint);
     setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding);
 }
 
@@ -184,6 +186,7 @@ void AbsFrameLessAutoSize::mouseMoveRect(const QPoint& p)
         }
     }
 }
+
 void AbsFrameLessAutoSize::mousePressEvent(QMouseEvent *event)
 {
     m_state.PressedSize=this->size();
@@ -191,16 +194,9 @@ void AbsFrameLessAutoSize::mousePressEvent(QMouseEvent *event)
     setFocus();
     if (event->button() == Qt::LeftButton)
     {
-//        m_state.WindowPos = this->pos(); //save the prssed position
-//        if(QRect(m_border+1,m_border+1,width()-(m_border+1)*2,height()-(m_border+1)*2).contains(QPoint(event->globalX()-x(),event->globalY()-y())))
-//        {
-//            m_state.MousePos = event->globalPos();
-//            m_state.MousePressed = true;
-//        }
-//        else
-//            m_state.IsPressBorder=true;
     }
 }
+
 void AbsFrameLessAutoSize::mouseMoveEvent(QMouseEvent *event)
 {
     mouseMoveRect(mapFromGlobal(event->globalPos()));
@@ -209,6 +205,7 @@ void AbsFrameLessAutoSize::mouseMoveEvent(QMouseEvent *event)
         this->move(m_state.WindowPos + (event->globalPos() - m_state.MousePos));
     }
 }
+
 void AbsFrameLessAutoSize::mouseReleaseEvent(QMouseEvent *event)
 {
     m_state.IsPressBorder=false;
