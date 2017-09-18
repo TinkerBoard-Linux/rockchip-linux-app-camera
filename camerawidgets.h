@@ -324,6 +324,7 @@ public:
 
 	void closeCamera();
 	void openCamera();
+	void uevent(const char *action, const char *dev);
 
     static CameraTopWidgets *m_topWid;
 

@@ -451,6 +451,27 @@ void cameraWidgets::closeCamera()
     stop_timer_count();
 }
 
+void cameraWidgets::uevent(const char *action, const char *dev)
+{
+     if(strcmp(action,"remove")==0 && videodevice_name && dev)
+     {
+         ///dev/video%d
+         int len = 6;
+         char devPath[len+1];
+         memset(devPath, 0x0, sizeof(devPath));
+         strncpy(devPath, videodevice_name+(strlen(videodevice_name)-len), len);
+         if(strstr(dev, devPath)){
+             qDebug() << "camera uevent" << action<< devPath;
+             cleanup_pipeline ();
+             m_camera_error = true;
+             ready_for_capture = false;
+             if(m_cameraWidgets){
+                  emit m_cameraWidgets->sig_camera_error("dev disconnect");
+             }
+         }
+    }
+}
+
 void cameraWidgets::slot_pressed()
 {
     qDebug() << "capture btn pressed";

@@ -5,12 +5,19 @@
 
 MainWindow::MainWindow(QWidget *parent):BaseWindow(parent)
 {
+    initData();
     initLayout();
     connect(m_cameraWid->m_topWid,SIGNAL(returnClick()),this,SLOT(slot_appQuit()));
 }
 
 MainWindow::~MainWindow()
 {
+}
+
+void MainWindow::initData(){
+    mainWindow = this;
+    ueventThread = new UeventThread(this);
+    ueventThread->start();
 }
 
 void MainWindow::initLayout(){
@@ -61,4 +68,12 @@ void MainWindow::keyPressEvent(QKeyEvent *event)
 
 void MainWindow::slot_standby()
 {
+}
+
+void MainWindow::slot_uevent(const char *action, const char *dev)
+{
+    qDebug()<<action<<"======"<<dev;
+    if(m_cameraWid){
+        m_cameraWid->uevent(action, dev);
+    }
 }

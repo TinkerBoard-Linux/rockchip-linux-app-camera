@@ -42,6 +42,7 @@ SOURCES += main.cpp\
         cameraquickcontentwidget.cpp \
         camerapreviewwidgets.cpp \
         global_value.cpp \
+        ueventthread.cpp \
 
 HEADERS += mainwindow.h \
         cameratopwidgets.h \
@@ -49,6 +50,7 @@ HEADERS += mainwindow.h \
         cameraquickcontentwidget.h \
         camerapreviewwidgets.h \
         global_value.h \
+        ueventthread.h \
 
 RESOURCES += \
     res_main.qrc
