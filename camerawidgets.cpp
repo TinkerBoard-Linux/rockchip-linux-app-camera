@@ -344,6 +344,16 @@ void cameraWidgets::updateSupportedViewfinderSettings() {
             s.setMinimumFrameRate(60.0f);
             s.setMaximumFrameRate(60.0f);
             m_supportedViewfinderSettings.append(s);*/
+        } else if (m_supportedViewfinderSettings.size() == 0) {
+            qDebug() << "isp camera ViewfinderSettings";
+            QCameraViewfinderSettings s;
+            s.setResolution(640, 480);
+            s.setPixelFormat(QVideoFrame::Format_YUYV);
+            s.setPixelAspectRatio(QSize(1, 1));
+
+            s.setMinimumFrameRate(30.0f);
+            s.setMaximumFrameRate(30.0f);
+            m_supportedViewfinderSettings.append(s);
         }
         gst_caps_unref(supportedCaps);
     }
@@ -428,9 +438,9 @@ void cameraWidgets::openCamera()
 {
     qDebug() << "openCamera start";
     
-    gst_debug_set_default_threshold(GST_LEVEL_ERROR);
-    gst_debug_set_threshold_for_name ("camerabin", GST_LEVEL_ERROR);
-    gst_debug_set_threshold_for_name ("kmssink", GST_LEVEL_DEBUG);
+    gst_debug_set_default_threshold(GST_LEVEL_FIXME);
+    gst_debug_set_threshold_for_name ("camerabin", GST_LEVEL_FIXME);
+    gst_debug_set_threshold_for_name ("kmssink", GST_LEVEL_FIXME);
 
     recording = FALSE;
     ready_for_capture = FALSE;
@@ -562,7 +572,8 @@ void cameraWidgets::slot_camera_changed(int index) {
 void cameraWidgets::slot_previewsize_changed(int index) {
     qDebug() << "previewsize changed index:" << index;
     if (index >= 0 && index != m_preview_index) {
-        if (!strcmp(m_caminfoList.at(m_cam_index).cam.name, "tc358749xbg")) {
+        if (/*!strcmp(m_caminfoList.at(m_cam_index).cam.name, "tc358749xbg")*/
+                m_caminfoList.at(m_cam_index).cam.type == RK_CAM_ATTACHED_TO_ISP) {
             cleanup_pipeline();
             m_preview_index = index;
             openCamera();
@@ -583,6 +594,8 @@ cameraWidgets::camera_src_get_timestamp_probe (GstPad * pad, GstPadProbeInfo * i
   timing = (CaptureTiming *) g_list_first (capture_times)->data;
   timing->camera_capture = gst_util_get_timestamp ();
 
+  qDebug() << "camera_src_get_timestamp_probe";
+
   return GST_PAD_PROBE_REMOVE;
 }
 
@@ -594,6 +607,8 @@ cameraWidgets::viewfinder_get_timestamp_probe (GstPad * pad, GstPadProbeInfo * i
 
   timing = (CaptureTiming *) g_list_first (capture_times)->data;
   timing->precapture = gst_util_get_timestamp ();
+
+  qDebug() << "viewfinder_get_timestamp_probe";
 
   return GST_PAD_PROBE_REMOVE;
 }
@@ -1055,7 +1070,8 @@ gboolean cameraWidgets::setup_pipeline (void)
   }
   GST_FIXME_OBJECT (camerabin, "camera ready");
 
-  if (!strcmp(m_caminfoList.at(m_cam_index).cam.name, "tc358749xbg")) {
+  if (/*!strcmp(m_caminfoList.at(m_cam_index).cam.name, "tc358749xbg")*/
+          m_caminfoList.at(m_cam_index).cam.type == RK_CAM_ATTACHED_TO_ISP) {
       qDebug() << "hdmi in need setparameter before camerabin playing";
       updateSupportedViewfinderSettings();
       updateCameraParameter();
@@ -1289,8 +1305,8 @@ gboolean cameraWidgets::run_taking_pipeline (gpointer user_data)
 
   capture_count++;
 
-  timing = g_slice_new0 (CaptureTiming);
-  capture_times = g_list_prepend (capture_times, timing);
+  //timing = g_slice_new0 (CaptureTiming);
+  //capture_times = g_list_prepend (capture_times, timing);
 
   /* set pad probe to check when buffer leaves the camera source */
   if (mode == MODE_IMAGE) {
@@ -1302,7 +1318,7 @@ gboolean cameraWidgets::run_taking_pipeline (gpointer user_data)
 
     gst_object_unref (pad);
   }
-  timing->start_capture = gst_util_get_timestamp ();
+  //timing->start_capture = gst_util_get_timestamp ();
   g_signal_emit_by_name (camerabin, "start-capture", 0);
 
   if (mode == MODE_VIDEO) {
@@ -1321,7 +1337,8 @@ gboolean cameraWidgets::run_preview_pipeline (gpointer user_data)
 {
   qDebug() << "run_preview_pipeline";
   GstElement *camera_source = NULL;
-  if (strcmp(m_caminfoList.at(m_cam_index).cam.name, "tc358749xbg")) {
+  if (/*strcmp(m_caminfoList.at(m_cam_index).cam.name, "tc358749xbg")*/
+          m_caminfoList.at(m_cam_index).cam.type != RK_CAM_ATTACHED_TO_ISP) {
       /* configure a resolution and framerate */
       if (image_width > 0 && image_height > 0) {
         if (mode == MODE_VIDEO) {
@@ -1368,7 +1385,7 @@ gboolean cameraWidgets::run_preview_pipeline (gpointer user_data)
   if (preview_caps_name != NULL) {
     preview_caps = gst_caps_from_string (preview_caps_name);
     if (preview_caps) {
-      g_object_set (camerabin, "post-previews", TRUE, NULL);
+      g_object_set (camerabin, "post-previews", FALSE, NULL);
       g_object_set (camerabin, "preview-caps", preview_caps, NULL);
       GST_FIXME ("Preview caps set");
     } else
