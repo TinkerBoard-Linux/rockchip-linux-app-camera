@@ -27,7 +27,7 @@ void CameraTopWidgets::initLayout()
     lyout1->addStretch(0);
     lyout1->setContentsMargins(0,0,0,0);
 
-    titleLabel = new QLabel("camera",this);
+    titleLabel = new QLabel(this);
     QFont font = titleLabel->font();
     font.setPixelSize(font_size_big);
     titleLabel->setFont(font);
@@ -39,6 +39,8 @@ void CameraTopWidgets::initLayout()
     hmainyout->setContentsMargins(0,0,0,0);
     hmainyout->setSpacing(0);
     setLayout(hmainyout);
+
+    titleLabel->setText(tr("camera"));
 }
 
 void CameraTopWidgets::initConnection()

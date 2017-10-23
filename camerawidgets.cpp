@@ -410,7 +410,7 @@ bool compare(const camerainfo info0, const camerainfo info1) {
 
 void cameraWidgets::showEvent(QShowEvent *event) {
     qDebug() << "cameraWidgets::showEvent";
-    m_topWid->setTitle(QString("opening camera(%1)").arg(videodevice_name));
+    m_topWid->setTitle(tr("opening camera(%1)").arg(videodevice_name));
     m_caminfoList.clear();
 
     mode = MODE_IMAGE;
@@ -485,7 +485,7 @@ void cameraWidgets::uevent(const char *action, const char *dev)
 void cameraWidgets::slot_pressed()
 {
     qDebug() << "capture btn pressed";
-    m_mode->setText("Switching Mode");
+    m_mode->setText(tr("Switching Mode"));
 }
 
 void cameraWidgets::slot_released()
@@ -549,11 +549,11 @@ void cameraWidgets::slot_camera_error (QString error)
 
 void cameraWidgets::slot_capture_done(QString location) {
     qDebug() << "slot_capture_done:" << location;
-    m_topWid->setTitle(QString("capture %1").arg(location));
+    m_topWid->setTitle(tr("capture %1").arg(location));
     updateCamerabarStatus(true);
     if (mode == MODE_VIDEO && ready_for_capture) {
         recording = FALSE;
-        m_capture->setText("start Recorder");
+        m_capture->setText(tr("start Recorder"));
     }
 }
 
@@ -1199,7 +1199,7 @@ cameraWidgets::stop_capture_cb (GObject * self, GParamSpec * pspec, gpointer use
       g_idle_add ((GSourceFunc) run_preview_pipeline, NULL);
     } else {
       recording = FALSE;
-      m_capture->setText("start Recorder");
+      m_capture->setText(tr("start Recorder"));
       //g_main_loop_quit (loop);
     }
   }
@@ -1325,7 +1325,7 @@ gboolean cameraWidgets::run_taking_pipeline (gpointer user_data)
     qDebug() << "update recorder ui";
     recording = TRUE;
     m_capture->setEnabled(true);
-    m_capture->setText("stop Recorder");
+    m_capture->setText(tr("stop Recorder"));
     m_cameraWidgets->start_timer_count();
   }
 
@@ -1397,14 +1397,22 @@ gboolean cameraWidgets::run_preview_pipeline (gpointer user_data)
   GST_FIXME ("ready_for_capture=%d, m_camera_error=%d", ready_for_capture, m_camera_error);
   if(ready_for_capture && !m_camera_error){
     updateCamerabarStatus(true);
-    m_topWid->setTitle(QString("Camera(%1) open success").arg(videodevice_name));
+    m_topWid->setTitle(tr("Camera(%1) open success").arg(videodevice_name));
   } else {
     updateCamerabarStatus(false);
-    m_topWid->setTitle(QString("Camera(%1) open fail").arg(videodevice_name));
+    m_topWid->setTitle(tr("Camera(%1) open fail").arg(videodevice_name));
   }
+    if(mode == MODE_IMAGE){
+        m_capture->setText( tr("Take Picture"));
+    }else{
+        m_capture->setText( tr("Start Recorder"));
+    }
+    if(mode == MODE_IMAGE){
+        m_mode->setText(tr("Capture Image Mode"));
+    }else{
+        m_mode->setText(tr("Video Recorder Mode"));
+    }
 
-  m_capture->setText(mode == MODE_IMAGE ? "Take Picture" : "Start Recorder");
-  m_mode->setText(mode == MODE_IMAGE ? "Capture Image Mode" : "Video Recorder Mode");
 
   return FALSE;
 }
@@ -1804,12 +1812,22 @@ void cameraWidgets::init()
     image_width = 640;
     image_height = 480;
     
-    m_capture = new QPushButton(mode == MODE_IMAGE ? "Take Picture" 
-        : "start Recorder", this);
+    m_capture = new QPushButton(this);
+    if(mode == MODE_IMAGE){
+        m_capture->setText(tr("Take Picture"));
+    }else{
+        m_capture->setText(tr("start Recorder"));
+    }
+
+
     m_capture->setStyleSheet("QPushButton{background-color:rgba(190,190,190,1);}");
 
-    m_mode = new QPushButton(mode == MODE_IMAGE ? "Capture Image Mode" 
-        : "Video Recorder Mode", this);
+    m_mode = new QPushButton(this);
+    if(mode == MODE_IMAGE){
+        m_mode->setText(tr("Capture Image Mode"));
+    }else{
+        m_mode->setText(tr("Video Recorder Mode"));
+    }
     m_mode->setStyleSheet("QPushButton{background-color:rgba(190,190,190,1);}");
 
     m_previewWid = new cameraPreviewwidgets(this);

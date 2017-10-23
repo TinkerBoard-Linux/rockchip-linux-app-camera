@@ -43,6 +43,7 @@ SOURCES += main.cpp\
         camerapreviewwidgets.cpp \
         global_value.cpp \
         ueventthread.cpp \
+    translations/language.cpp
 
 HEADERS += mainwindow.h \
         cameratopwidgets.h \
@@ -51,6 +52,9 @@ HEADERS += mainwindow.h \
         camerapreviewwidgets.h \
         global_value.h \
         ueventthread.h \
+    translations/language.h
 
 RESOURCES += \
-    res_main.qrc
+    res_main.qrc \
+    i18n.qrc \
+    i18n.qrc
