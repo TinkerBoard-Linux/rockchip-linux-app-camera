@@ -589,10 +589,10 @@ GstPadProbeReturn
 cameraWidgets::camera_src_get_timestamp_probe (GstPad * pad, GstPadProbeInfo * info,
     gpointer udata)
 {
-  CaptureTiming *timing;
+  /*CaptureTiming *timing;
 
   timing = (CaptureTiming *) g_list_first (capture_times)->data;
-  timing->camera_capture = gst_util_get_timestamp ();
+  timing->camera_capture = gst_util_get_timestamp ();*/
 
   qDebug() << "camera_src_get_timestamp_probe";
 
