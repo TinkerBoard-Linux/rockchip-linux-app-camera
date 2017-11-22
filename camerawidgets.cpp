@@ -117,6 +117,25 @@ QList<camerainfo> cameraWidgets::m_caminfoList;
 int cameraWidgets::m_cam_index;
 int cameraWidgets::m_preview_index;
 
+static GstEncodingProfile *
+create_ts_profile (void)
+{
+    GstEncodingContainerProfile *container;
+    GstCaps *caps = NULL;
+
+    caps = gst_caps_new_simple ("video/mpegts", "systemstream", G_TYPE_BOOLEAN,
+                                TRUE, "packetsize", G_TYPE_INT, 188, NULL);
+    container = gst_encoding_container_profile_new ("ts", NULL, caps, NULL);
+    gst_caps_unref (caps);
+
+    caps = gst_caps_new_empty_simple ("video/x-h264");
+    gst_encoding_container_profile_add_profile (container, (GstEncodingProfile *)
+                                               gst_encoding_video_profile_new (caps, NULL, NULL, 1));
+    gst_caps_unref (caps);
+
+    return (GstEncodingProfile *) container;
+}
+ 
 cameraWidgets::cameraWidgets(QWidget *parent):BaseWidget(parent)
 {
     setObjectName("cameraWidgets");
@@ -1036,7 +1055,7 @@ gboolean cameraWidgets::setup_pipeline (void)
       GST_WARNING ("Could not create ipp elements");
   }
 
-  prof = create_ogg_profile();//create_mp4_profile ();
+  prof = create_ts_profile();
   if (prof) {
     g_object_set (G_OBJECT (camerabin), "video-profile", prof, NULL);
     gst_encoding_profile_unref (prof);
@@ -1185,33 +1204,9 @@ error:
   return FALSE;
 }
 
-void
-cameraWidgets::stop_capture_cb (GObject * self, GParamSpec * pspec, gpointer user_data)
-{
-  qDebug() << "stop_capture_cb";
-  gboolean idle = FALSE;
-
-  g_object_get (camerabin, "idle", &idle, NULL);
-  qDebug() << "camerabin idle:" << idle;
-
-  if (idle) {
-    if (capture_count < capture_total) {
-      g_idle_add ((GSourceFunc) run_preview_pipeline, NULL);
-    } else {
-      recording = FALSE;
-      m_capture->setText(tr("start Recorder"));
-      //g_main_loop_quit (loop);
-    }
-  }
-
-  g_signal_handler_disconnect (camerabin, stop_capture_cb_id);
-}
-
 gboolean
 cameraWidgets::stop_capture (gpointer user_data)
 {
-  stop_capture_cb_id =  g_signal_connect (camerabin, "notify::idle",
-      (GCallback) stop_capture_cb, camerabin);
   g_signal_emit_by_name (camerabin, "stop-capture", 0);
   return FALSE;
 }
@@ -1219,12 +1214,6 @@ cameraWidgets::stop_capture (gpointer user_data)
 void cameraWidgets::notify_readyforcapture(GObject * obj,GParamSpec * pspec,gpointer user_data) {
     g_object_get (obj, "ready-for-capture", &ready_for_capture, NULL);
         qDebug() << "notify_readyforcapture:" << ready_for_capture;
-    /*if (mode == MODE_VIDEO && ready_for_capture
-            && !strcmp(m_caminfoList.at(m_cam_index).cam.name, "tc358749xbg")) {
-        //hdmi in record video only get ready-for-capture signal,so change state here.
-        recording = FALSE;
-        emit m_cameraWidgets->sig_capture_done(m_location);
-    }*/
 }
 
 void cameraWidgets::set_metadata (GstElement * camera)
@@ -1260,7 +1249,7 @@ gboolean cameraWidgets::run_taking_pipeline (gpointer user_data)
 
     /* Construct filename */
   if (mode == MODE_VIDEO)
-    filename_suffix = ".mp4";
+    filename_suffix = ".ts";
   else
     filename_suffix = ".jpg";
   QDateTime current_date_time = QDateTime::currentDateTime();
