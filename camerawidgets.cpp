@@ -1791,16 +1791,16 @@ void cameraWidgets::init()
 
     GST_DEBUG_CATEGORY_INIT (camerabin_test, "camerabin-test", 0,
       "camerabin test");
-    
-    vfsink_name = g_strdup ("kmssink"); //default fakesink / waylandsink /autovideosink
+
+    vfsink_name = g_strdup ("autovideosink"); //default fakesink / waylandsink /autovideosink
     preview_caps_name = g_strdup ("video/x-raw,format=NV12,width=640,height=480");
-    filename = g_string_new ("/mnt/sdcard");
-    videosrc_name = g_strdup ("v4l2src");
+    filename = g_string_new ("/tmp");
+    videosrc_name = g_strdup ("rkisp");
     videodevice_name = g_strdup ("/dev/video0");
     viewfinder_caps_str = g_strdup ("video/x-raw,format=NV12,width=640,height=480");
     image_width = 640;
     image_height = 480;
-    
+
     m_capture = new QPushButton(this);
     if(mode == MODE_IMAGE){
         m_capture->setText(tr("Take Picture"));
