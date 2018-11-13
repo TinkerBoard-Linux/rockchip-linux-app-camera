@@ -138,6 +138,7 @@ struct rk_usb_cam_dev_infos {
 #define RK_SUPPORTED_CAMERA_NUM_MAX 10
 struct rk_cams_dev_info {
 	int num_camers;
+  int cams_dev_info;
 	struct rk_cam_video_input_infos*  cam[RK_SUPPORTED_CAMERA_NUM_MAX];
 	struct rk_isp_dev_info isp_dev;
 	struct rk_cif_dev_infos cif_devs;
@@ -404,6 +405,7 @@ private:
     int getCameraInfos(struct rk_cams_dev_info* cam_infos);
 	void updateSupportedViewfinderSettings();
     void updateCamerasBox();
+    void updateCameraSrcStatus();
     void updatePreviewSizesBox();
 	GstCaps *supportedCaps(int mode) const;
     void updateCameraParameter();
