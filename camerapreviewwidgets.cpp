@@ -18,12 +18,13 @@ void cameraPreviewwidgets::initLayout()
     m_contentWid = new cameraQuickContentWidget(this);
     m_contentWid->setResizeMode(QQuickWidget::SizeRootObjectToView);
     // set tanslate update for px3se
-    #ifndef DEVICE_EVB
+    //#ifndef DEVICE_EVB
     m_contentWid->setSource(QUrl("qrc:/camera_px3se.qml"));
     m_contentWid->setClearColor(QColor(Qt::transparent));
-    #else
+    /*#else
     m_contentWid->setSource(QUrl("qrc:/camera.qml"));
     #endif
+    */
     // 处理逻辑，将qml中的player转而用QMediaPlayer代替，便于用C++语言进行控制
     QObject* qmlMediaPlayer = m_contentWid->rootObject()->findChild<QObject*>("camera");
     m_player = qvariant_cast<QMediaPlayer *>(qmlMediaPlayer->property("mediaObject"));
