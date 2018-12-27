@@ -1598,10 +1598,10 @@ cameraWidgets::print_performance_data (void)
 
 void cameraWidgets::updateCameraSrcStatus() {
     if (RK_CAM_ATTACHED_TO_ISP == m_caminfoList.at(m_cam_index).cam.type) {
-        vfsink_name = g_strdup ("autovideosink"); //default fakesink / waylandsink /autovideosink
+        vfsink_name = g_strdup ("kmssink"); //default fakesink / waylandsink /autovideosink
         videosrc_name = g_strdup ("rkisp");
     } else {
-        vfsink_name = g_strdup ("autovideosink"); //default fakesink / waylandsink /autovideosink
+        vfsink_name = g_strdup ("kmssink"); //default fakesink / waylandsink /autovideosink
         videosrc_name = g_strdup ("v4l2src");
     }
 
@@ -1818,10 +1818,10 @@ void cameraWidgets::init()
     memset(&g_cam_infos, 0, sizeof(g_cam_infos));
     getCameraInfos(&g_cam_infos);
     if (RK_CAM_ATTACHED_TO_ISP == g_cam_infos.cams_dev_info) {
-        vfsink_name = g_strdup ("autovideosink"); //default fakesink / waylandsink /autovideosink
+        vfsink_name = g_strdup ("kmssink"); //default fakesink / waylandsink /autovideosink
         videosrc_name = g_strdup ("rkisp");
     } else {
-        vfsink_name = g_strdup ("autovideosink"); //default fakesink / waylandsink /autovideosink
+        vfsink_name = g_strdup ("kmssink"); //default fakesink / waylandsink /autovideosink
         videosrc_name = g_strdup ("v4l2src");
     }
 
