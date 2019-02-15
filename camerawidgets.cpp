@@ -233,8 +233,6 @@ int cameraWidgets::getCameraInfos(struct rk_cams_dev_info* cam_infos) {
                  m_caminfoList.append(caminfo);
                }
              }
-             if(RK_CAM_ATTACHED_TO_INVALID == cam_infos->cams_dev_info)
-                cam_infos->cams_dev_info = node->input[video_node_input_num].type;
              qDebug() << "input name " << node->input[video_node_input_num].name << ", id " << j;
            } else
              break;
@@ -266,8 +264,6 @@ int cameraWidgets::getCameraInfos(struct rk_cams_dev_info* cam_infos) {
                 caminfo.video_index = i;
                 caminfo.cam = node->input[video_node_input_num];
                 m_caminfoList.append(caminfo);
-                if(RK_CAM_ATTACHED_TO_INVALID == cam_infos->cams_dev_info)
-                    cam_infos->cams_dev_info = node->input[video_node_input_num].type;
                 qDebug() << "input name " << node->input[video_node_input_num].name << ",id " << j;
             } else
                 break;
@@ -297,8 +293,6 @@ int cameraWidgets::getCameraInfos(struct rk_cams_dev_info* cam_infos) {
                 caminfo.video_index = i;
                 caminfo.cam = node->input[video_node_input_num];
                 m_caminfoList.append(caminfo);
-                if(RK_CAM_ATTACHED_TO_INVALID == cam_infos->cams_dev_info)
-                    cam_infos->cams_dev_info = node->input[video_node_input_num].type;
                 qDebug() << "input name " << node->input[video_node_input_num].name << ",id " << j;
             } else
                 break;
@@ -592,7 +586,6 @@ void cameraWidgets::slot_camera_changed(int index) {
         m_preview_index = 0;
         m_cam_index = index;
         mode = MODE_IMAGE;
-        updateCameraSrcStatus();
         updateCamerabarStatus(true);
         openCamera();
     }
@@ -1596,19 +1589,6 @@ cameraWidgets::print_performance_data (void)
       TIMEDIFF_ARGS (TIME_DIFF (avg.shot_to_buffer, target_shot_to_buffer)));
 }
 
-void cameraWidgets::updateCameraSrcStatus() {
-    if (RK_CAM_ATTACHED_TO_ISP == m_caminfoList.at(m_cam_index).cam.type) {
-        vfsink_name = g_strdup ("kmssink"); //default fakesink / waylandsink /autovideosink
-        videosrc_name = g_strdup ("rkisp");
-    } else {
-        vfsink_name = g_strdup ("kmssink"); //default fakesink / waylandsink /autovideosink
-        videosrc_name = g_strdup ("v4l2src");
-    }
-
-    qDebug() << "vfsink_name:" << vfsink_name;
-    qDebug() << "videosrc_name:" << videosrc_name;
-}
-
 void cameraWidgets::updateCamerabarStatus(gboolean enable) {
     m_capture->setEnabled(enable);
     m_mode->setEnabled(enable);
@@ -1814,16 +1794,9 @@ void cameraWidgets::init()
 
     GST_DEBUG_CATEGORY_INIT (camerabin_test, "camerabin-test", 0,
       "camerabin test");
-    m_caminfoList.clear();
-    memset(&g_cam_infos, 0, sizeof(g_cam_infos));
-    getCameraInfos(&g_cam_infos);
-    if (RK_CAM_ATTACHED_TO_ISP == g_cam_infos.cams_dev_info) {
-        vfsink_name = g_strdup ("kmssink"); //default fakesink / waylandsink /autovideosink
-        videosrc_name = g_strdup ("rkisp");
-    } else {
-        vfsink_name = g_strdup ("kmssink"); //default fakesink / waylandsink /autovideosink
-        videosrc_name = g_strdup ("v4l2src");
-    }
+
+    vfsink_name = g_strdup ("kmssink"); //default fakesink / waylandsink /autovideosink
+    videosrc_name = g_strdup ("rkv4l2src");
 
     preview_caps_name = g_strdup ("video/x-raw,format=NV12,width=640,height=480");
     filename = g_string_new ("/tmp");
