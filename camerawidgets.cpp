@@ -506,7 +506,7 @@ void cameraWidgets::uevent(const char *action, const char *dev)
 
 void cameraWidgets::slot_pressed()
 {
-    qDebug() << "capture btn pressed";
+    qDebug() << "mode btn pressed";
     m_mode->setText(tr("Switching Mode"));
 }
 
@@ -1832,8 +1832,7 @@ void cameraWidgets::init()
     m_previewsizesbox->setStyleSheet("QComboBox::drop-down {width:100px;}"
                                      "QComboBox{background-color:rgba(190,190,190,1);}");
 
-    connect(m_capture, SIGNAL(released()),this,SLOT(slot_released()));
-    connect(m_capture, SIGNAL(clicked()),this,SLOT(slot_capture()));
+    connect(m_capture, SIGNAL(released()),this,SLOT(slot_capture()));
 
     connect(m_mode, SIGNAL(pressed()),this,SLOT(slot_pressed()));
     connect(m_mode, SIGNAL(clicked()),this,SLOT(slot_modeswitch()));
