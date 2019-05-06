@@ -50,7 +50,6 @@ void MainWindow::disableApplication()
 
 void MainWindow::enableApplication()
 {
-    qDebug("enable camera application.");
     this->setVisible(true);
 }
 
