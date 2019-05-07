@@ -1835,7 +1835,7 @@ void cameraWidgets::init()
     connect(m_capture, SIGNAL(released()),this,SLOT(slot_capture()));
 
     connect(m_mode, SIGNAL(pressed()),this,SLOT(slot_pressed()));
-    connect(m_mode, SIGNAL(clicked()),this,SLOT(slot_modeswitch()));
+    connect(m_mode, SIGNAL(released()),this,SLOT(slot_modeswitch()));
 
     connect(this, SIGNAL(sig_camera_error(QString)), this, SLOT(slot_camera_error(QString)));
     connect(this, SIGNAL(sig_capture_done(QString)), this, SLOT(slot_capture_done(QString)));
