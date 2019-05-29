@@ -67,8 +67,8 @@ GST_DEBUG_CATEGORY_STATIC (camerabin_test);
 
 #define TIMEDIFF_ARGS(t) (t)
 
-#define RK_ENUM_VIDEO_NUM_MAX 10
-#define RK_CAM_ATTRACED_INUPUT_MAX 3
+#define RK_ENUM_VIDEO_NUM_MAX 12
+#define RK_CAM_ATTRACED_INUPUT_MAX 4
 
 
 /* capture mode options*/
@@ -135,7 +135,7 @@ struct rk_usb_cam_dev_infos {
 	struct rk_cam_video_node video_nodes[USB_CAM_DEV_VIDEO_NODES_NUM_MAX];
 };
  
-#define RK_SUPPORTED_CAMERA_NUM_MAX 10
+#define RK_SUPPORTED_CAMERA_NUM_MAX 12
 struct rk_cams_dev_info {
 	int num_camers;
 	struct rk_cam_video_input_infos*  cam[RK_SUPPORTED_CAMERA_NUM_MAX];
