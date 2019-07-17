@@ -23,7 +23,13 @@ PKGCONFIG += \
     gstreamer-video-$$GST_VERSION \
     gstreamer-pbutils-$$GST_VERSION
 
-LIBS += -lqgsttools_p
+lessThan(QT_MINOR_VERSION, 12) {
+    LIBS += -lqgsttools_p
+} else {
+    LIBS += -lQt5MultimediaGstTools
+}
+
+
 DEFINES += HAVE_GST_PHOTOGRAPHY
 LIBS += -lgstphotography-$$GST_VERSION
 DEFINES += GST_USE_UNSTABLE_API #prevents warnings because of unstable photography API
